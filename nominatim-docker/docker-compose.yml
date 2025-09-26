@@ -1,0 +1,28 @@
+services:
+  api:
+    image: mediagis/nominatim:4.4
+    container_name: nominatim-api
+    ports:
+      - '8585:8080'
+    volumes:
+      - nominatim-db-data:/var/lib/postgresql/14/main
+      - ../osm-data:/nominatim/
+    environment:
+      POSTGRES_PASSWORD: nominatim
+      NOMINATIM_IMPORT: 'false'
+      PBF_PATH: /nominatim/south-australia.osm.pbf
+    restart: unless-stopped
+
+  import-data:
+    image: mediagis/nominatim:4.4
+    container_name: nominatim-import
+    volumes:
+      - nominatim-db-data:/var/lib/postgresql/14/main
+      - ../osm-data:/nominatim
+    environment:
+      POSTGRES_PASSWORD: nominatim
+      NOMINATIM_IMPORT: 'true'
+      PBF_PATH: /nominatim/south-australia.osm.pbf
+
+volumes:
+  nominatim-db-data:
