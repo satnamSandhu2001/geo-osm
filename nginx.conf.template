@@ -8,13 +8,13 @@ http {
     # Allowed origins from env ("|" pipe-separated regex)
     map $http_origin $cors_allowed_origin {
         default "";
-        ~^(${ALLOWED_ORIGINS})$ $http_origin;
+        "~^(${ALLOWED_ORIGINS})$" $http_origin;
     }
 
     # API keys from env ("|" pipe-separated regex)
     map $http_x_api_key $valid_key {
         default 0;
-        ~^(${API_KEYS})$ 1;
+        "~^(${API_KEYS})$" 1;
     }
 
     # Rate limit zone (5 requests per second per IP, burst of 10)
