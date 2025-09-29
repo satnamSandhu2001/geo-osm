@@ -1,38 +1,36 @@
-# Define allowed origins
+# allowed origins from env ("|" pipe-separated)
 map $http_origin $cors_allowed_origin {
     default "";
-    "https://site1.com"          $http_origin;
-    "https://sub1.otherdomain.com" $http_origin;
+    ~^(${ALLOWED_ORIGINS})$ $http_origin;
 }
 
-# Define API key(s)
+# API key(s) from env ("|" pipe-separated)
 map $http_x_api_key $valid_key {
     default 0;
-    "SECRET_API_KEY...oanff98hwr899" 1;
+    ~^(${API_KEYS})$ 1;
 }
 
-# Rate limit zone (10 requests per second per IP, burst of 20)
-limit_req_zone $binary_remote_addr zone=api_rate:10m rate=10r/s;
+# Rate limit zone (5 requests per second per IP, burst of 10)
+limit_req_zone $binary_remote_addr zone=api_rate:10m rate=5r/s;
 
 server {
     listen 80;
-    server_name nominatim.myapp.com;
 
     location / {
-        # Check API key
+        # API key check
         if ($valid_key = 0) {
             return 403;
         }
 
-        # Check allowed origin
+        # CORS check
         if ($cors_allowed_origin = "") {
             return 403;
         }
 
-        # Apply IP rate limiting
-        limit_req zone=api_rate burst=20 nodelay;
+        # IP rate limiting
+        limit_req zone=api_rate burst=10 nodelay;
 
-        proxy_pass http://127.0.0.1:8585;
+        proxy_pass http://api:8080;
         proxy_set_header Host $host;
 
         # Dynamic CORS

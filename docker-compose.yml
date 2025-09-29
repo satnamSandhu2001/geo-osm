@@ -1,0 +1,52 @@
+services:
+  api:
+    image: mediagis/nominatim:4.4
+    container_name: nominatim-api
+    volumes:
+      - nominatim-db-data:/var/lib/postgresql/14/main
+      - ./osm-data:/nominatim/
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: nominatim
+      NOMINATIM_IMPORT: 'false'
+      PBF_PATH: /nominatim/south-australia.osm.pbf
+    restart: unless-stopped
+    networks:
+      - nominatim
+
+  import-data:
+    image: mediagis/nominatim:4.4
+    container_name: nominatim-import
+    volumes:
+      - nominatim-db-data:/var/lib/postgresql/14/main
+      - ./osm-data:/nominatim
+    environment:
+      POSTGRES_PASSWORD: nominatim
+      NOMINATIM_IMPORT: 'true'
+      PBF_PATH: /nominatim/south-australia.osm.pbf
+
+  nginx:
+    image: nginx:alpine
+    container_name: nominatim-nginx
+    environment:
+      - ALLOWED_ORIGINS=https://example.com|https://sub1.example.com
+      - API_KEYS=SECRET_KEY_1|SECRET_KEY_2
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+    command: >
+      /bin/sh -c "envsubst < /etc/nginx/templates/nginx.conf.template >
+      /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    ports:
+      - '127.0.0.1:8585:80'
+    depends_on:
+      - api
+    networks:
+      - nominatim
+
+volumes:
+  nominatim-db-data:
+
+networks:
+  nominatim:
+    driver: bridge

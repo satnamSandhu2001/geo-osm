@@ -1,1 +1,3 @@
 /osm-data
+*.env*
+!*.env.example
