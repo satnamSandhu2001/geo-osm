@@ -20,22 +20,12 @@ docker-compose run --rm import-data
 3. Start container:
 
 ```bash
-docker-compose up -d api
+docker-compose up -d api nginx
 ```
 
 Nominatim is now running on your server.
 
 ---
-
-## Setup authentication via Nginx for production uses
-
-copy `nginx.conf` file to configuration file in sites-available folder:
-
-```bash
-cp nginx.conf /etc/nginx/sites-available/mydomain
-```
-
-.
 
 ## Axios Example
 

@@ -37,4 +37,6 @@ fi
 
 echo -e "\033[0;32mSetup complete.\033[0m"
 echo -e "\033[0;32mRun 'cd $BASE_DIR' then 'docker-compose run --rm import-data' to import data.\033[0m"
-echo -e "\033[0;32mRun 'docker-compose up -d api' to start API service.\033[0m"
+echo -e "\033[0;34mRun '  make sure to update `env` file with your API keys and allowed origins.'\033[0m"
+echo -e "\033[0;32mRun 'docker-compose up -d api nginx' to start API service.\033[0m"
+echo ""
