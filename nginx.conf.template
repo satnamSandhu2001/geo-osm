@@ -1,50 +1,58 @@
-# allowed origins from env ("|" pipe-separated)
-map $http_origin $cors_allowed_origin {
-    default "";
-    ~^(${ALLOWED_ORIGINS})$ $http_origin;
+worker_processes auto;
+
+events {
+    worker_connections 1024;
 }
 
-# API key(s) from env ("|" pipe-separated)
-map $http_x_api_key $valid_key {
-    default 0;
-    ~^(${API_KEYS})$ 1;
-}
-
-# Rate limit zone (5 requests per second per IP, burst of 10)
-limit_req_zone $binary_remote_addr zone=api_rate:10m rate=5r/s;
-
-server {
-    listen 80;
-
-    location / {
-        # API key check
-        if ($valid_key = 0) {
-            return 403;
-        }
-
-        # CORS check
-        if ($cors_allowed_origin = "") {
-            return 403;
-        }
-
-        # IP rate limiting
-        limit_req zone=api_rate burst=10 nodelay;
-
-        proxy_pass http://api:8080;
-        proxy_set_header Host $host;
-
-        # Dynamic CORS
-        add_header 'Access-Control-Allow-Origin' "$cors_allowed_origin" always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
-        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
+http {
+    # Allowed origins from env ("|" pipe-separated regex)
+    map $http_origin $cors_allowed_origin {
+        default "";
+        ~^(${ALLOWED_ORIGINS})$ $http_origin;
     }
 
-    # Handle preflight requests
-    if ($request_method = OPTIONS) {
-        add_header 'Access-Control-Allow-Origin' "$cors_allowed_origin" always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
-        add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
-        add_header 'Access-Control-Max-Age' 86400;
-        return 204;
+    # API keys from env ("|" pipe-separated regex)
+    map $http_x_api_key $valid_key {
+        default 0;
+        ~^(${API_KEYS})$ 1;
+    }
+
+    # Rate limit zone (5 requests per second per IP, burst of 10)
+    limit_req_zone $binary_remote_addr zone=api_rate:10m rate=5r/s;
+
+    server {
+        listen 80;
+
+        location / {
+            # API key check
+            if ($valid_key = 0) {
+                return 403;
+            }
+
+            # CORS check
+            if ($cors_allowed_origin = "") {
+                return 403;
+            }
+
+            # IP rate limiting
+            limit_req zone=api_rate burst=10 nodelay;
+
+            proxy_pass http://api:8080;
+            proxy_set_header Host $host;
+
+            # Dynamic CORS
+            add_header 'Access-Control-Allow-Origin' "$cors_allowed_origin" always;
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+            add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
+        }
+
+        # Handle preflight requests
+        if ($request_method = OPTIONS) {
+            add_header 'Access-Control-Allow-Origin' "$cors_allowed_origin" always;
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+            add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
+            add_header 'Access-Control-Max-Age' 86400;
+            return 204;
+        }
     }
 }

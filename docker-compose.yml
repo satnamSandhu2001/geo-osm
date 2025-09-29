@@ -5,8 +5,6 @@ services:
     volumes:
       - nominatim-db-data:/var/lib/postgresql/14/main
       - ./osm-data:/nominatim/
-    env_file:
-      - .env
     environment:
       POSTGRES_PASSWORD: nominatim
       NOMINATIM_IMPORT: 'false'
@@ -29,9 +27,8 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nominatim-nginx
-    environment:
-      - ALLOWED_ORIGINS=https://example.com|https://sub1.example.com
-      - API_KEYS=SECRET_KEY_1|SECRET_KEY_2
+    env_file:
+      - .env
     volumes:
       - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
     command: >
