@@ -30,10 +30,10 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
-    command: >
-      /bin/sh -c "envsubst '$$API_KEY' < /etc/nginx/templates/nginx.conf.template >
-      /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+      - ./nginx.conf.template:/etc/nginx/nginx.conf:ro
+    # command: >
+    #   /bin/sh -c "envsubst '$$API_KEY' < /etc/nginx/templates/nginx.conf.template >
+    #   /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     ports:
       - '8585:80'
     depends_on:
