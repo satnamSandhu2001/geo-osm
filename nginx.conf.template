@@ -5,6 +5,8 @@ events {
 }
 
 http {
+    map_hash_bucket_size 128;
+
     map $http_x_api_key $valid_key {
         default 0;
         "${API_KEY}" 1;
