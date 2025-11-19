@@ -30,10 +30,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nginx.conf.template:/tmp/nginx.conf.template:ro
-      - ./entrypoint.sh:/entrypoint.sh:ro
+      - ./nginx.conf.template:/etc/nginx/nginx.conf:ro
+    # volumes:
+    #   - ./nginx.conf.template:/tmp/nginx.conf.template:ro
+    #   - ./entrypoint.sh:/entrypoint.sh:ro
 
-    command: ['/bin/sh', '/entrypoint.sh']
+    # command: ['/bin/sh', '/entrypoint.sh']
     ports:
       - '8585:80'
     depends_on:
