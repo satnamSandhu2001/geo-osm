@@ -19,7 +19,7 @@ http {
                 return 204;
             }
 
-            if ($http_x_api_key != "secret") {
+            if ($http_x_api_key != $API_KEY) {
                 return 403;
             }
 
