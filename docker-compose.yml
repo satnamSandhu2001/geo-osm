@@ -35,7 +35,7 @@ services:
       /bin/sh -c "envsubst '$$ALLOWED_ORIGINS $$API_KEYS' < /etc/nginx/templates/nginx.conf.template >
       /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     ports:
-      - '127.0.0.1:8585:80'
+      - '8585:80'
     depends_on:
       - api
     networks:
