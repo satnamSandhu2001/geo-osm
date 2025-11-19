@@ -1,7 +1,5 @@
 worker_processes auto;
 
-env API_KEY;
-
 events {
     worker_connections 1024;
 }
