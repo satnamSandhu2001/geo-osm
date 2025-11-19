@@ -5,14 +5,9 @@ events {
 }
 
 http {
-    map $http_origin $cors_allowed_origin {
-        default "";
-        "~^(${ALLOWED_ORIGINS})$$" $http_origin;
-    }
-
     map $http_x_api_key $valid_key {
         default 0;
-        "~^(${API_KEYS})$$" 1;
+        "${API_KEYS}" 1;
     }
 
     limit_req_zone $binary_remote_addr zone=api_rate:10m rate=5r/s;
@@ -23,14 +18,15 @@ http {
         location / {
             # Handle CORS preflight
             if ($request_method = OPTIONS) {
+                add_header 'Access-Control-Allow-Origin' '*' always;
+                add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+                add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
+                add_header 'Access-Control-Max-Age' 86400 always;
                 return 204;
             }
 
+            # Check API key
             if ($valid_key = 0) {
-                return 403;
-            }
-
-            if ($cors_allowed_origin = "") {
                 return 403;
             }
 
@@ -38,10 +34,9 @@ http {
             proxy_pass http://api:8080;
             proxy_set_header Host $host;
 
-            add_header 'Access-Control-Allow-Origin' "$cors_allowed_origin" always;
+            add_header 'Access-Control-Allow-Origin' '*' always;
             add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
             add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
-            add_header 'Access-Control-Max-Age' 86400 always;
         }
     }
 }
