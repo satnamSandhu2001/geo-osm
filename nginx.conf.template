@@ -7,6 +7,9 @@ events {
 http {
     limit_req_zone $binary_remote_addr zone=api_rate:10m rate=5r/s;
 
+    # Increase map hash bucket size for longer API keys
+    map_hash_bucket_size 128;
+
     # Map to check API key
     map $http_x_api_key $api_key_valid {
         default 0;
@@ -56,6 +59,11 @@ http {
             add_header 'Access-Control-Allow-Origin' '*' always;
             add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
             add_header 'Access-Control-Allow-Headers' 'Content-Type, Authorization, X-API-Key' always;
+        }
+
+        location @forbidden {
+            add_header 'Content-Type' 'application/json' always;
+            return 403 '{"error": "Invalid API Key"}';
         }
     }
 }
