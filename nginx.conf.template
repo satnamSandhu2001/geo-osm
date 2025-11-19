@@ -1,5 +1,7 @@
 worker_processes auto;
 
+env API_KEY;
+
 events {
     worker_connections 1024;
 }
@@ -9,8 +11,6 @@ http {
 
     server {
         listen 80;
-
-        set $api_key "${API_KEY}";
 
         location / {
             # Handle CORS preflight
@@ -22,12 +22,12 @@ http {
                 return 204;
             }
 
-            # Check API key
-            if ($http_x_api_key != $api_key) {
+            if ($http_x_api_key != "$API_KEY") {
                 return 403;
             }
 
             limit_req zone=api_rate burst=10 nodelay;
+
             proxy_pass http://api:8080;
             proxy_set_header Host $host;
 
