@@ -7,7 +7,7 @@ events {
 http {
     map $http_x_api_key $valid_key {
         default 0;
-        "${API_KEYS}" 1;
+        "${API_KEY}" 1;
     }
 
     limit_req_zone $binary_remote_addr zone=api_rate:10m rate=5r/s;
