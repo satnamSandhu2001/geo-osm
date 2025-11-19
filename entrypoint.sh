@@ -4,7 +4,7 @@ set -e
 echo "Starting nginx configuration..."
 
 # Replace API_KEY in template
-envsubst '$API_KEY' < /tmp/nginx.conf.template > /etc/nginx/nginx.conf
+envsubst '$API_KEY' < /templates/nginx.conf.template > /etc/nginx/nginx.conf
 
 echo "Generated nginx.conf:"
 cat /etc/nginx/nginx.conf
