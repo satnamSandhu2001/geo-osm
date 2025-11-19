@@ -37,7 +37,7 @@ services:
       echo '---- GENERATED CONFIG ----' &&
       cat /etc/nginx/nginx.conf &&
       echo '--------------------------' &&
-      nginx -t"
+      nginx -t && nginx -g 'daemon off;'"
     ports:
       - '8585:80'
     depends_on:
