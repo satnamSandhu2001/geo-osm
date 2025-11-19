@@ -30,7 +30,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - ./nginx.conf.template:/tmp/nginx.conf.template:ro
       - ./entrypoint.sh:/entrypoint.sh:ro
 
     command: ['/bin/sh', '/entrypoint.sh']
