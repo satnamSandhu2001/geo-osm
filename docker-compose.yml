@@ -6,7 +6,7 @@ services:
       - nominatim-db-data:/var/lib/postgresql/14/main
       - ./osm-data:/nominatim/
     ports:
-      - '8585:8080'
+      - '8586:8080'
     environment:
       POSTGRES_PASSWORD: nominatim
       NOMINATIM_IMPORT: 'false'
