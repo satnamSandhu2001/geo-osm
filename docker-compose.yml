@@ -50,4 +50,4 @@ volumes:
 
 networks:
   nominatim:
-  external: true
+    external: true
