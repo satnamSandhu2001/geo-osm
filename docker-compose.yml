@@ -5,6 +5,8 @@ services:
     volumes:
       - nominatim-db-data:/var/lib/postgresql/14/main
       - ./osm-data:/nominatim/
+    ports:
+      - '8586:8080'
     environment:
       POSTGRES_PASSWORD: nominatim
       NOMINATIM_IMPORT: 'false'
@@ -24,24 +26,24 @@ services:
       NOMINATIM_IMPORT: 'true'
       PBF_PATH: /nominatim/south-australia.osm.pbf
 
-  nginx:
-    image: nginx:alpine
-    container_name: nominatim-nginx
-    env_file:
-      - .env
-    volumes:
-      - ./nginx.conf.template:/etc/nginx/nginx.conf:ro
-    # volumes:
-    #   - ./nginx.conf.template:/tmp/nginx.conf.template:ro
-    #   - ./entrypoint.sh:/entrypoint.sh:ro
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: nominatim-nginx
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./nginx.conf.template:/etc/nginx/nginx.conf:ro
+  #   # volumes:
+  #   #   - ./nginx.conf.template:/tmp/nginx.conf.template:ro
+  #   #   - ./entrypoint.sh:/entrypoint.sh:ro
 
-    # command: ['/bin/sh', '/entrypoint.sh']
-    ports:
-      - '8585:80'
-    depends_on:
-      - api
-    networks:
-      - nominatim
+  #   # command: ['/bin/sh', '/entrypoint.sh']
+  #   ports:
+  #     - '8585:80'
+  #   depends_on:
+  #     - api
+  #   networks:
+  #     - nominatim
 
 volumes:
   nominatim-db-data:
